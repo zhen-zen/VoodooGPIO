@@ -920,7 +920,7 @@ void VoodooGPIO::InterruptOccurred(OSObject *owner, IOInterruptEventSource *src,
     }
 }
 
-void VoodooGPIO::interruptOccurredGated() {
+IOReturn VoodooGPIO::interruptOccurredGated() {
     UInt32 inactive = 0;
     bool firstdelay = true;
     
@@ -934,4 +934,6 @@ void VoodooGPIO::interruptOccurredGated() {
     
     nInactiveCommunities = (inactive < ncommunities)? inactive : ((UInt32)ncommunities - 1);
     isInterruptBusy = false;
+    
+    return kIOReturnSuccess;
 }
