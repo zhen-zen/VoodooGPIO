@@ -246,7 +246,7 @@ class VoodooGPIO : public IOService {
     void intel_gpio_community_irq_handler(struct intel_community *community, bool *firstdelay);
 
     void InterruptOccurred(OSObject *owner, IOInterruptEventSource *src, int intCount);
-    void interruptOccurredGated();
+    IOReturn interruptOccurredGated();
 
  public:
     IOReturn getInterruptType(int pin, int *interruptType) override;
