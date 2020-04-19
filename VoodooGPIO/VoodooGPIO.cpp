@@ -700,6 +700,8 @@ void VoodooGPIO::stop(IOService *provider) {
     if (interruptSource) {
         interruptSource->disable();
         workLoop->removeEventSource(interruptSource);
+        // wait for pending interrupt event
+        IOSleep(500);
         OSSafeReleaseNULL(interruptSource);
     }
 
@@ -719,20 +721,9 @@ void VoodooGPIO::stop(IOService *provider) {
         IOSafeDeleteNULL(communities[i].pinInterruptAction, IOInterruptAction, communities[i].npins);
         IOSafeDeleteNULL(communities[i].interruptTypes, unsigned, communities[i].npins);
         IOSafeDeleteNULL(communities[i].pinInterruptRefcons, void*, communities[i].npins);
-        IOSafeDeleteNULL(communities[i].isActiveCommunity, bool, communities[i].npins);
+        IOSafeDeleteNULL(communities[i].isActiveCommunity, bool, 1);
     }
     
-    if (interruptSource) {
-        interruptSource->disable();
-        workLoop->removeEventSource(interruptSource);
-        OSSafeReleaseNULL(interruptSource);
-    }
-    
-    if (command_gate) {
-        workLoop->removeEventSource(command_gate);
-        OSSafeReleaseNULL(command_gate);
-    }
-
     OSSafeReleaseNULL(workLoop);
     
     PMstop();
