@@ -700,8 +700,6 @@ void VoodooGPIO::stop(IOService *provider) {
     if (interruptSource) {
         interruptSource->disable();
         workLoop->removeEventSource(interruptSource);
-        // wait for pending interrupt event
-        IOSleep(500);
         OSSafeReleaseNULL(interruptSource);
     }
 
