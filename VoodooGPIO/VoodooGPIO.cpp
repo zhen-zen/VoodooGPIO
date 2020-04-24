@@ -474,10 +474,19 @@ void VoodooGPIO::intel_pinctrl_suspend() {
         
         if (!intel_pinctrl_should_save(desc->number))
             continue;
-        
-        val = readl(intel_get_padcfg(desc->number, PADCFG0));
+
+        padcfg = intel_get_padcfg(desc->number, PADCFG0);
+        if (!padcfg)
+            continue;
+
+        val = readl(padcfg);
         pads[i].padcfg0 = val & ~PADCFG0_GPIORXSTATE;
-        val = readl(intel_get_padcfg(desc->number, PADCFG1));
+
+        padcfg = intel_get_padcfg(desc->number, PADCFG1);
+        if (!padcfg)
+            continue;
+
+        val = readl(padcfg);
         pads[i].padcfg1 = val;
         
         padcfg = intel_get_padcfg(desc->number, PADCFG2);
@@ -523,12 +532,17 @@ void VoodooGPIO::intel_pinctrl_resume() {
             continue;
         
         padcfg = intel_get_padcfg(desc->number, PADCFG0);
+        if (!padcfg)
+            continue;
+
         val = readl(padcfg) & ~PADCFG0_GPIORXSTATE;
-        if (val != pads[i].padcfg0) {
+        if (val != pads[i].padcfg0)
             writel(pads[i].padcfg0, padcfg);
-        }
-        
+
         padcfg = intel_get_padcfg(desc->number, PADCFG1);
+        if (!padcfg)
+            continue;
+
         val = readl(padcfg);
         if (val != pads[i].padcfg1) {
             writel(pads[i].padcfg1, padcfg);
