@@ -656,7 +656,7 @@ bool VoodooGPIO::start(IOService *provider) {
         communities[i].pinInterruptRefcons = (void **)IOMalloc(sz);
         memset(communities[i].pinInterruptRefcons, 0, sz);
         
-        communities[i].isActiveCommunity = (bool *)IOMalloc(1);;
+        communities[i].isActiveCommunity = IONew(bool, 1);
         *communities[i].isActiveCommunity = false;
     }
     nInactiveCommunities = (UInt32)ncommunities - 1;
