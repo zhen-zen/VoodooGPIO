@@ -656,7 +656,7 @@ bool VoodooGPIO::start(IOService *provider) {
         communities[i].pinInterruptRefcons = (void **)IOMalloc(sz);
         memset(communities[i].pinInterruptRefcons, 0, sz);
         
-        communities[i].isActiveCommunity = (bool *)IOMalloc(1);;
+        communities[i].isActiveCommunity = IONew(bool, 1);
         *communities[i].isActiveCommunity = false;
     }
     nInactiveCommunities = (UInt32)ncommunities - 1;
@@ -719,20 +719,9 @@ void VoodooGPIO::stop(IOService *provider) {
         IOSafeDeleteNULL(communities[i].pinInterruptAction, IOInterruptAction, communities[i].npins);
         IOSafeDeleteNULL(communities[i].interruptTypes, unsigned, communities[i].npins);
         IOSafeDeleteNULL(communities[i].pinInterruptRefcons, void*, communities[i].npins);
-        IOSafeDeleteNULL(communities[i].isActiveCommunity, bool, communities[i].npins);
+        IOSafeDeleteNULL(communities[i].isActiveCommunity, bool, 1);
     }
     
-    if (interruptSource) {
-        interruptSource->disable();
-        workLoop->removeEventSource(interruptSource);
-        OSSafeReleaseNULL(interruptSource);
-    }
-    
-    if (command_gate) {
-        workLoop->removeEventSource(command_gate);
-        OSSafeReleaseNULL(command_gate);
-    }
-
     OSSafeReleaseNULL(workLoop);
     
     PMstop();
