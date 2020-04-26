@@ -837,9 +837,7 @@ IOReturn VoodooGPIO::getInterruptType(int pin, int *interruptType) {
     if (hw_pin < 0)
         return kIOReturnNoInterrupt;
 
-    // XXX: Need to Lie to macOS that the interrupt is Edge or it keeps disabling and re-enabling it (which we do ourselves)
-    *interruptType = kIOInterruptTypeEdge;
-    return kIOReturnSuccess;
+    return getProvider()->getInterruptType(0, interruptType);
 }
 
 /**
@@ -897,6 +895,7 @@ IOReturn VoodooGPIO::enableInterrupt(int pin) {
     if (community->pinInterruptActionOwners[communityidx]) {
         intel_gpio_irq_set_type(hw_pin, community->interruptTypes[communityidx]);
         intel_gpio_irq_mask_unmask(hw_pin, false);
+        interruptSource->enable();
         return kIOReturnSuccess;
     }
     return kIOReturnNoInterrupt;
@@ -911,6 +910,7 @@ IOReturn VoodooGPIO::disableInterrupt(int pin) {
         return kIOReturnNoInterrupt;
 
     intel_gpio_irq_mask_unmask(hw_pin, true);
+    interruptSource->disable();
     return kIOReturnSuccess;
 }
 
