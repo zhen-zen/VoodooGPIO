@@ -209,8 +209,8 @@ class VoodooGPIO : public IOService {
     bool controllerIsAwake;
 
     IOWorkLoop *workLoop = nullptr;
-    IOInterruptEventSource *interruptSource = nullptr;
     IOCommandGate* command_gate = nullptr;
+    OSArray* registered_pin_list = nullptr;
     bool isInterruptBusy;
     UInt32 nInactiveCommunities;
 
@@ -244,6 +244,7 @@ class VoodooGPIO : public IOService {
     void intel_pinctrl_resume();
 
     void intel_gpio_community_irq_handler(struct intel_community *community, bool *firstdelay);
+    void intel_gpio_pin_irq_handler(unsigned hw_pin);
 
     void InterruptOccurred(OSObject *owner, IOInterruptEventSource *src, int intCount);
     IOReturn interruptOccurredGated();
