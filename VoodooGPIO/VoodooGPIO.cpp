@@ -771,8 +771,8 @@ IOReturn VoodooGPIO::setPowerState(unsigned long powerState, IOService *whatDevi
                     OSObject *pinInterruptOwner = community->pinInterruptActionOwners[j];
                     if (pinInterruptOwner) {
                         int pin = community->pin_base + j;
-                        intel_gpio_irq_set_type(pin, community->interruptTypes[j]);
-                        intel_gpio_irq_mask_unmask(pin, false);
+                        if (intel_gpio_irq_set_type(pin, community->interruptTypes[j]))
+                            intel_gpio_irq_mask_unmask(pin, false);
                     }
                 }
             }
@@ -962,8 +962,8 @@ IOReturn VoodooGPIO::enableInterrupt(int pin) {
         return kIOReturnNoInterrupt;
 
     unsigned communityidx = hw_pin - community->pin_base;
-    if (community->pinInterruptActionOwners[communityidx]) {
-        intel_gpio_irq_set_type(hw_pin, community->interruptTypes[communityidx]);
+    if (community->pinInterruptActionOwners[communityidx] &&
+        intel_gpio_irq_set_type(hw_pin, community->interruptTypes[communityidx])) {
         intel_gpio_irq_mask_unmask(hw_pin, false);
         return getProvider()->enableInterrupt(0);
     }
